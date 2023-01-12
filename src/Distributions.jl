@@ -129,6 +129,7 @@ export
     MixtureModel,
     Multinomial,
     MultivariateNormal,
+    MvEpd,
     MvLogNormal,
     MvNormal,
     MvNormalCanon,

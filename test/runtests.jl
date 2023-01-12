@@ -11,6 +11,10 @@ import JSON
 import ForwardDiff
 
 const tests = [
+    "multivariate/mvepd"
+]
+"""
+const tests = [
     "univariate/continuous/loguniform",
     "univariate/continuous/arcsine",
     "univariate/discrete/dirac",
@@ -155,6 +159,7 @@ const tests = [
     # "multivariate_stats", # extra file compared to /src
     # "univariate/continuous/vonmises",
 ]
+"""
 
 printstyled("Running tests:\n", color=:blue)
 

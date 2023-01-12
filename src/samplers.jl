@@ -23,6 +23,7 @@ for fname in ["aliastable.jl",
               "multinomial.jl",
               "vonmises.jl",
               "vonmisesfisher.jl",
+              "mvepdsampler.jl",
               "discretenonparametric.jl",
               "categorical.jl"]
 
