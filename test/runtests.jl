@@ -10,10 +10,7 @@ using LinearAlgebra
 import JSON
 import ForwardDiff
 
-const tests = [
-    "multivariate/mvepd"
-]
-"""
+
 const tests = [
     "univariate/continuous/loguniform",
     "univariate/continuous/arcsine",
@@ -47,6 +44,7 @@ const tests = [
     "multivariate/dirichletmultinomial",
     "univariate/continuous/logitnormal",
     "multivariate/mvtdist",
+    "multivariate/mvepd",
     "univariate/continuous/kolmogorov",
     "edgeworth",
     "matrixreshaped", # extra file compared to /src
@@ -159,7 +157,6 @@ const tests = [
     # "multivariate_stats", # extra file compared to /src
     # "univariate/continuous/vonmises",
 ]
-"""
 
 printstyled("Running tests:\n", color=:blue)
 

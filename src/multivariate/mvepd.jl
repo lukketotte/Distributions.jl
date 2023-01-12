@@ -93,6 +93,7 @@ insupport(d::AbstractMvEpd, x::AbstractVector{T}) where {T<:Real} =
     length(d) == length(x) && all(isfinite, x)
 
 Base.eltype(::Type{<:GenericMvEpd{T}}) where {T} = T
+@inline partype(d::GenericMvEpd{T}) where {T} = T
 
 function mvepd_const(d::AbstractMvEpd)
     H = convert(eltype(d), pi^(-d.dim/2))
@@ -100,7 +101,7 @@ function mvepd_const(d::AbstractMvEpd)
 end
 
 function logpdf(d::AbstractMvEpd, x::AbstractVector{T}) where T<:Real
-    mvepd_const(d) -0.5 * logdet(d.Σ) -0.5*sqmahal(d, x)^d.p
+    mvepd_const(d) -0.5 * logdet(d.Σ) -0.5*sqmahal(d, x)*d.p
 end
 
 pdf(d::AbstractMvEpd, x::AbstractVector{<:Real}) = exp(logpdf(d, x))
