@@ -1,7 +1,7 @@
 """
     MvEPD(p, μ, Σ)
 
-The *Multivariate exponential power distribution* is a multidimensional generalization of the 
+The *Multivariate exponential power distribution* (MEPD) is a multidimensional generalization of the 
 *exponential power distribution* (also known as generalized gaussian). The probability density function of
 a d-dimensional multivariate exponential power distribution with mean vector ``\\boldsymbol{\\mu}`` and
 covariance matrix ``\\boldsymbol{\\Sigma}`` is [1]:
@@ -14,8 +14,22 @@ where
 ```math
 k = \\frac{d \\Gamma(d/2)}{\\pi^{\\frac{1}{2}} \\Gamma(1+d/(2p))2^{1+\\frac{d}{2p}}}
 ```
+The MEPD has special cases multivariate normal (``p = 1``), multivariate Laplace (``p = 0.5``) and multivariate uniform (``p \\rightarrow \\infty``)
 
-[1] Zhy, D. and V. Zinde-Walsh (2009). Properties and estimation of asymmetric exponential power distribution. _Journal of econometrics_, 148(1):86-96, 2009.
+[1] Gómez, E and Gomez-Viilegas, MA and Marïn, J.M (1998). 
+A multivariate generalization of the power exponential famility of distributions. 
+_Communications in Statistics-Theory and Methods, 27(3):589-600.
+
+```julia
+MvEpd(p, Σ)             # MEPD with shape p, scale matrix Σ and zero vector as mean
+MvEpd(p, μ, Σ)          # MEPD with shape p, mean vector μ and scale matrix Σ 
+params(d)               # Get the parameters, i.e., (p, μ, Σ)
+length(d)               # Get the dimension, i.e., length(μ)
+scale(d)                # Get the scale matrix, i.e., Σ
+mean(d)                 # Get the location vector, i.e., μ
+var(d)                  # Get the diagonal of the covariance matrix
+cov(d)                  # Get the covariance matrix
+```
 """
 abstract type AbstractMvEpd <: ContinuousMultivariateDistribution end
 
@@ -63,12 +77,17 @@ MvEpd(p::Real, Σ::PDMat) = GenericMvEpd(p, Σ)
 MvEpd(p::Real, μ::Vector{<:Real}, Σ::Matrix{<:Real}) = GenericMvEpd(p, μ, PDMat(Σ))
 MvEpd(p::Real, Σ::Matrix{<:Real}) = GenericMvEpd(p, PDMat(Σ))
 
+mean(d::GenericMvEpd) = d.μ
+
 length(d::GenericMvEpd) = d.dim
 params(d::GenericMvEpd) = (d.p, d.dim, d.μ, d.Σ)
 sqmahal(d::GenericMvEpd, x::AbstractVector{<:Real}) = invquad(d.Σ, x - d.μ)
-cov(d::GenericMvEpd) = (2^(1/d.p)*gamma((d.dim+2)/(2*d.p))/(d.dim*gamma(d.dim/(2*d.p))))*d.Σ
+
+cov(d::GenericMvEpd) = (2^(1/d.p)*gamma((d.dim+2)/(2*d.p))/(d.dim*gamma(d.dim/(2*d.p))))*Matrix(d.Σ)
 var(d::GenericMvEpd) = (2^(1/d.p)*gamma((d.dim+2)/(2*d.p))/(d.dim*gamma(d.dim/(2*d.p))))*diag(d.Σ)
 invscale(d::GenericMvEpd) = Matrix(inv(d.Σ))
+scale(d::GenericMvEpd) = Matrix(d.Σ)
+
 
 insupport(d::AbstractMvEpd, x::AbstractVector{T}) where {T<:Real} =
     length(d) == length(x) && all(isfinite, x)
@@ -81,7 +100,6 @@ function mvepd_const(d::AbstractMvEpd)
 end
 
 function logpdf(d::AbstractMvEpd, x::AbstractVector{T}) where T<:Real
-    k = mvepd_const(d)
     mvepd_const(d) -0.5 * logdet(d.Σ) -0.5*sqmahal(d, x)^d.p
 end
 
